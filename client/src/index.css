@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+body { @apply antialiased text-slate-900; }
+
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: linear-gradient(165deg,#8ec5ff 0%,#b4d6ff 34%,#d9e8ff 60%,#ffe3c4 86%,#ffd0a3 100%);
 }
+.sun {
+  position: absolute; top: 9%; right: 14%;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle,#fff8e6 0%,#ffe7ad 42%,rgba(255,213,140,0) 72%);
+  animation: pulse 7s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.85;transform:scale(1)} 50%{opacity:1;transform:scale(1.06)} }
+.cloud {
+  position: absolute; height: 70px; border-radius: 100px;
+  background: rgba(255,255,255,.55); filter: blur(16px);
+  animation: drift linear infinite;
+}
+@keyframes drift { from{transform:translateX(-30vw)} to{transform:translateX(130vw)} }
+
+.glass {
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  background: rgba(255,255,255,.22);
+  border: 1px solid rgba(255,255,255,.5);
+  box-shadow: 0 8px 30px rgba(31,38,80,.12);
+}
+.glass-strong { background: rgba(108,99,220,.26); box-shadow: 0 8px 28px rgba(60,52,137,.2); }
+.ink { color: #22284a; text-shadow: 0 1px 2px rgba(255,255,255,.35); }

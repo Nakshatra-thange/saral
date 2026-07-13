@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import Anthropic from "@anthropic-ai/sdk";
-
+import { mockRoast } from "./mock.js";
 dotenv.config();
 
 const app = express();
@@ -93,40 +93,42 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.post("/api/roast", async (req, res) => {
-  const { message, context } = req.body || {};
-
-  if (!message || typeof message !== "string" || message.trim().length < 10) {
-    return res
-      .status(400)
-      .json({ error: "Paste an outreach message (at least 10 characters) to roast." });
-  }
-
-  const userContent = context?.trim()
-    ? `Context about the creator/brand: ${context.trim()}\n\nThe outreach message:\n${message.trim()}`
-    : `The outreach message:\n${message.trim()}`;
-
-  try {
-    const response = await anthropic.messages.create({
-      model: MODEL,
-      max_tokens: 1500,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: userContent }],
-    });
-
-    const text = response.content
-      .filter((b) => b.type === "text")
-      .map((b) => b.text)
-      .join("");
-
-    const result = validate(extractJson(text));
-    res.json(result);
-  } catch (err) {
-    console.error("Roast failed:", err.message);
-    res
-      .status(502)
-      .json({ error: "The roaster choked. Check the API key and try again." });
-  }
-});
+    const { message, context } = req.body || {};
+  
+    if (!message || typeof message !== "string" || message.trim().length < 10) {
+      return res
+        .status(400)
+        .json({ error: "Paste an outreach message (at least 10 characters) to roast." });
+    }
+  
+    // No key? Don't fail — fall back to the heuristic so the demo always works.
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.json(mockRoast(message));
+    }
+  
+    const userContent = context?.trim()
+      ? `Context about the creator/brand: ${context.trim()}\n\nThe outreach message:\n${message.trim()}`
+      : `The outreach message:\n${message.trim()}`;
+  
+    try {
+      const response = await anthropic.messages.create({
+        model: MODEL,
+        max_tokens: 1500,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: "user", content: userContent }],
+      });
+  
+      const text = response.content
+        .filter((b) => b.type === "text")
+        .map((b) => b.text)
+        .join("");
+  
+      res.json(validate(extractJson(text)));
+    } catch (err) {
+      console.error("Live roast failed, serving fallback:", err.message);
+      res.json(mockRoast(message)); // graceful: demo continues
+    }
+  });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
