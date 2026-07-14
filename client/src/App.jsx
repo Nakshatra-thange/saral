@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { roastMessage } from "./api";
-
+import { EXAMPLES } from "./examples";
 function GhostGauge({ score }) {
   const r = 50, circ = 2 * Math.PI * r;
   const offset = circ * (1 - score / 100);
@@ -31,6 +31,27 @@ function Roast({ quote, problem }) {
     </div>
   );
 }
+
+function Skeleton() {
+    return (
+      <>
+        <div className="glass flex items-center gap-4 rounded-3xl p-5">
+          <div className="h-[104px] w-[104px] flex-shrink-0 animate-pulse rounded-full bg-white/40" />
+          <div className="flex-1 space-y-2">
+            <div className="h-3 w-24 animate-pulse rounded bg-white/40" />
+            <div className="h-5 w-40 animate-pulse rounded bg-white/50" />
+            <div className="h-6 w-28 animate-pulse rounded-full bg-white/40" />
+          </div>
+        </div>
+        {[0, 1].map((i) => (
+          <div key={i} className="glass space-y-2 rounded-2xl px-4 py-3.5">
+            <div className="h-3 w-1/2 animate-pulse rounded bg-white/40" />
+            <div className="h-3 w-3/4 animate-pulse rounded bg-white/50" />
+          </div>
+        ))}
+      </>
+    );
+  }
 
 export default function App() {
   const [message, setMessage] = useState("");
@@ -97,7 +118,21 @@ export default function App() {
           >
             {loading ? "Reading the room…" : "Roast my outreach 🔥"}
           </button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <span className="self-center text-xs font-medium text-slate-600">Try:</span>
+            {EXAMPLES.map((ex) => (
+              <button
+                key={ex.label}
+                onClick={() => setMessage(ex.text)}
+                className="rounded-full border border-white/50 bg-white/30 px-3 py-1 text-xs font-medium text-slate-700 transition hover:bg-white/50"
+              >
+                {ex.label}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {loading && <Skeleton />}
 
         {error && (
           <div className="glass rounded-2xl px-4 py-3 text-sm font-medium text-rose-800">
@@ -118,6 +153,11 @@ export default function App() {
                 <span className="mt-2 inline-block rounded-full border border-rose-400/40 bg-rose-400/25 px-3 py-1 text-xs font-semibold text-rose-900">
                   vibe: {result.vibe}
                 </span>
+                {result.demoMode && (
+                  <p className="mt-2 text-[11px] font-medium text-indigo-900/60">
+                    demo mode — add an API key for the real SIA
+                  </p>
+                )}
               </div>
             </div>
 

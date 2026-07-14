@@ -15,9 +15,9 @@ body { @apply antialiased text-slate-900; }
   position: absolute; top: 9%; right: 14%;
   width: 200px; height: 200px; border-radius: 50%;
   background: radial-gradient(circle,#fff8e6 0%,#ffe7ad 42%,rgba(255,213,140,0) 72%);
-  animation: pulse 7s ease-in-out infinite;
+  animation: sun-pulse 7s ease-in-out infinite;
 }
-@keyframes pulse { 0%,100%{opacity:.85;transform:scale(1)} 50%{opacity:1;transform:scale(1.06)} }
+@keyframes sun-pulse { 0%,100%{opacity:.85;transform:scale(1)} 50%{opacity:1;transform:scale(1.06)} }
 .cloud {
   position: absolute; height: 70px; border-radius: 100px;
   background: rgba(255,255,255,.55); filter: blur(16px);
@@ -34,3 +34,4 @@ body { @apply antialiased text-slate-900; }
 }
 .glass-strong { background: rgba(108,99,220,.26); box-shadow: 0 8px 28px rgba(60,52,137,.2); }
 .ink { color: #22284a; text-shadow: 0 1px 2px rgba(255,255,255,.35); }
+@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.7} }
